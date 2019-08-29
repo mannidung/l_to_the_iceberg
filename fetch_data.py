@@ -30,7 +30,7 @@ for id in ids:
     this_url = base_url + id
     request = requests.get(this_url)
     request_dict = json.loads(request.text)
-    request_dict['time_stamp'] = dt.now().isoformat(timespec='seconds')
+    request_dict['time_stamp'] = dt.now().isoformat()
     results.append(request_dict)
 
 # Write to file
