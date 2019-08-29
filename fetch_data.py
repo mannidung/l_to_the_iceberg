@@ -2,8 +2,10 @@ import requests
 from datetime import datetime as dt
 import json
 
-# File name prefix
+# File and folder settings
+save_folder = "./"
 file_name_prefix = "liseberg"
+
 # Time when script is executed
 fetch_time = dt.now().strftime("%Y%m%dT%H%M%S")
 
@@ -33,5 +35,5 @@ for id in ids:
 
 # Write to file
 filename = file_name_prefix+"_"+fetch_time+".txt"
-with open(filename, 'w', encoding='utf-8') as file:
+with open(save_folder + filename, 'w', encoding='utf-8') as file:
     json.dump(results, file, ensure_ascii=False, indent=4)
