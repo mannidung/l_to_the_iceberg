@@ -2,6 +2,7 @@ import json
 import pandas as pd
 from os import listdir
 import fnmatch
+import re
 
 # Data paths
 raw_data_folder = "./data/"
@@ -13,7 +14,12 @@ index = []
 data_dict = {}
 
 # Translates the Liseberg status string to a numerical value
-status_to_value_dict = {'0-10': 10}
+status_to_value_dict = {'0-10': 10,
+                        '10-20': 20,
+                        '20-30': 30,
+                        '30-40': 40,
+                        '40-50': 50,
+                        '50-60': 60}
 
 # Traverse all data files
 listOfFiles = listdir(raw_data_folder)
@@ -29,9 +35,17 @@ for file in listOfFiles:
             # Fill index for this file
             index.append(json_data[0].get('time_stamp'))
             for entry in json_data:
-                # Get the value corresponding to the string
-                # See dict above
-                value = status_to_value_dict.get(entry['status'])
+                # Extract queue value from status string
+                queue_time = re.search(':\s(.+?)\smin', entry['status'])
+                if queue_time:
+                    match = queue_time.group(1)
+                    print(match)
+                    # Get the value corresponding to the string
+                    # See dict above
+                    print(status_to_value_dict.get(match))
+                    value = status_to_value_dict.get(match)
+                else:
+                    value = None
                 data_dict[str(entry['name'])] = value
             data.append(data_dict)
 
@@ -41,6 +55,7 @@ df = pd.DataFrame(data, index=index)
 df.fillna(value=pd.np.nan, inplace=True)
 # Turn index to DateTime
 df.index = pd.to_datetime(df.index)
+df.sort_index(inplace=True)
 # For debugging
 print(df.head())
 
